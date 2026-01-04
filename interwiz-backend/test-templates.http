@@ -1,0 +1,75 @@
+### Get All Templates (with filters)
+GET http://localhost:3001/api/templates?page=1&limit=6&search=customer&type=SCREENING&domain=CUSTOMER_SUPPORT_AND_SALES
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get All Templates (default)
+GET http://localhost:3001/api/templates
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get Single Template
+GET http://localhost:3001/api/templates/TEMPLATE_ID_HERE
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Create Template
+POST http://localhost:3001/api/templates
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "title": "Customer Support Representative",
+  "description": "This interview template evaluates candidates for customer support roles",
+  "domain": "CUSTOMER_SUPPORT_AND_SALES",
+  "jobTitle": "Customer Support Representative",
+  "jobDescription": "Overview: The Customer Support Representative will handle customer inquiries and provide excellent service.",
+  "type": "SCREENING",
+  "tags": ["customer-service", "support"],
+  "assessments": [
+    {
+      "assessmentId": "ASSESSMENT_ID_1",
+      "weightage": 40,
+      "order": 1
+    },
+    {
+      "assessmentId": "ASSESSMENT_ID_2",
+      "weightage": 40,
+      "order": 2
+    },
+    {
+      "assessmentId": "ASSESSMENT_ID_3",
+      "weightage": 20,
+      "order": 3
+    }
+  ]
+}
+
+### Update Template
+PUT http://localhost:3001/api/templates/TEMPLATE_ID_HERE
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "title": "Updated Customer Support Representative",
+  "description": "Updated description",
+  "isPublic": true
+}
+
+### Clone Template
+POST http://localhost:3001/api/templates/TEMPLATE_ID_HERE/clone
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Delete Template
+DELETE http://localhost:3001/api/templates/TEMPLATE_ID_HERE
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Filter by Tags
+GET http://localhost:3001/api/templates?tags=customer-service&tags=support
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Filter by Created By
+GET http://localhost:3001/api/templates?createdBy=all
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Sort by Duration
+GET http://localhost:3001/api/templates?sortBy=duration
+Authorization: Bearer YOUR_TOKEN_HERE
+

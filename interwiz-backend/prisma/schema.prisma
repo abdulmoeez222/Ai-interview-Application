@@ -1,0 +1,293 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String      @id @default(uuid())
+  email         String      @unique
+  password      String
+  firstName     String
+  lastName      String
+  company       String?
+  role          Role        @default(RECRUITER)
+  emailVerified Boolean     @default(false)
+  emailVerifyToken String?  @unique
+  emailVerifyExpires DateTime?
+  passwordResetToken String? @unique
+  passwordResetExpires DateTime?
+  interviewLimit Int        @default(10) // Based on plan
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  templates     Template[]
+  interviews    Interview[]
+  refreshTokens RefreshToken[]
+  assessments   Assessment[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("refresh_tokens")
+}
+
+enum Role {
+  RECRUITER
+  ADMIN
+}
+
+enum TemplateType {
+  SCREENING
+  IN_DEPTH
+}
+
+enum Domain {
+  CUSTOMER_SUPPORT_AND_SALES
+  ENGINEERING
+  MARKETING
+  PRODUCT
+  DESIGN
+  DATA_SCIENCE
+  OPERATIONS
+  HUMAN_RESOURCES
+  FINANCE
+  LEGAL
+  OTHER
+}
+
+model Template {
+  id                String            @id @default(uuid())
+  title             String
+  description       String            @db.Text
+  jobTitle          String
+  jobDescription    String?           @db.Text
+  jobDescriptionUrl String?
+  domain            Domain
+  type              TemplateType      @default(SCREENING)
+  tags              String[]          @default([])
+  isPublic          Boolean           @default(false)
+  totalDuration     Float             @default(0)
+  deletedAt         DateTime?
+  
+  // Cloning
+  clonedFrom        Template?         @relation("TemplateClones", fields: [clonedFromId], references: [id])
+  clonedFromId      String?
+  clones            Template[]        @relation("TemplateClones")
+  
+  // Relations
+  createdBy         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String
+  assessments       TemplateAssessment[]
+  interviews       Interview[]
+  
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@map("templates")
+  @@index([userId])
+  @@index([domain])
+  @@index([type])
+  @@index([isPublic])
+  @@index([deletedAt])
+}
+
+model Assessment {
+  id                String            @id @default(uuid())
+  name              String
+  type              AssessmentType     @default(ROLE_SPECIFIC)
+  duration          Float
+  skillsEvaluated   String[]
+  description       String?           @db.Text
+  difficulty        Difficulty        @default(MEDIUM)
+  questions         Json              // Array of Question objects
+  isSystem          Boolean           @default(false) // System assessments vs custom
+  isPublic           Boolean          @default(false)
+  deletedAt         DateTime?
+  
+  // Relations
+  createdBy         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String
+  templateAssessments TemplateAssessment[]
+  
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@map("assessments")
+  @@index([userId])
+  @@index([type])
+  @@index([difficulty])
+  @@index([isPublic])
+  @@index([deletedAt])
+}
+
+enum AssessmentType {
+  ROLE_SPECIFIC
+  CUSTOM
+  BASIC
+  PROFESSIONAL
+  ANALYTICAL
+  LIVE_CODING
+  BEHAVIORAL
+  TECHNICAL
+  CULTURAL_FIT
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+model TemplateAssessment {
+  id            String      @id @default(uuid())
+  template      Template    @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  templateId    String
+  assessment    Assessment  @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  assessmentId  String
+  weightage     Float       // 0-100
+  scoreImpact   Float       // 0-100 (usually same as weightage)
+  order         Int         // Order in template
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([templateId, assessmentId, order])
+  @@map("template_assessments")
+  @@index([templateId])
+  @@index([assessmentId])
+}
+
+model Interview {
+  id              String          @id @default(uuid())
+  candidateEmail  String
+  candidateName   String
+  candidatePhone  String?
+  template        Template        @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  templateId      String
+  status          InterviewStatus @default(REQUESTED)
+  
+  // Tokens
+  joinToken       String          @unique
+  inviteToken     String          @unique
+  
+  // Scheduling
+  scheduledAt     DateTime?
+  expiresAt       DateTime
+  timezone        String          @default("UTC")
+  
+  // Interview data
+  currentQuestionIndex Int         @default(0)
+  conversationHistory Json?       // AI conversation context
+  duration        Float?          // Actual duration in minutes
+  
+  // Scores and evaluation
+  overallScore    Float?
+  scoreBreakdown  Json?           // Per assessment scores
+  aiEvaluation    String?         @db.Text
+  recommendation  String?         // HIRE, NO_HIRE, MAYBE
+  trustScore      Float?          // 0-100
+  
+  // Recording & transcription
+  recordingUrl    String?
+  transcriptUrl   String?
+  
+  // Proctoring
+  proctorData     Json?           // Face detections, tab switches, etc.
+  metadata        Json?           // Custom fields
+  
+  // Timestamps
+  startedAt       DateTime?
+  completedAt     DateTime?
+  
+  // Relations
+  createdBy       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+  responses       InterviewResponse[]
+  schedule        Schedule?
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@map("interviews")
+  @@index([userId])
+  @@index([status])
+  @@index([templateId])
+  @@index([joinToken])
+  @@index([inviteToken])
+  @@index([scheduledAt])
+}
+
+model InterviewResponse {
+  id                String    @id @default(uuid())
+  interview         Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  interviewId       String
+  assessmentId      String
+  questionId        String
+  questionText      String    @db.Text
+  responseText      String    @db.Text
+  responseAudioUrl  String?
+  score              Float?    // 0-100
+  evaluation         String?   @db.Text
+  timeSpent          Int       // seconds
+  order              Int       // Question order in assessment
+  
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@map("interview_responses")
+  @@index([interviewId])
+  @@index([assessmentId])
+  @@index([questionId])
+}
+
+model Schedule {
+  id                String    @id @default(uuid())
+  interview         Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  interviewId       String    @unique
+  availabilitySlots Json      // Array of { startTime, endTime }
+  selectedSlot      Json?     // { startTime, endTime }
+  timezone          String    @default("UTC")
+  candidateTimezone String?
+  status            ScheduleStatus @default(PENDING)
+  calendarEventId   String?   // Google Calendar or Outlook event ID
+  calendarProvider  CalendarProvider?
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("schedules")
+}
+
+enum ScheduleStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  RESCHEDULED
+}
+
+enum CalendarProvider {
+  GOOGLE_CALENDAR
+  OUTLOOK
+  NONE
+}
+
+enum InterviewStatus {
+  REQUESTED
+  SCHEDULED
+  ONGOING
+  COMPLETED
+  CANCELLED
+  EXPIRED
+}
+

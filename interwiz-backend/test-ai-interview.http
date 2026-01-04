@@ -1,0 +1,17 @@
+### Start AI Interview Session
+POST http://localhost:3001/api/ai/interview/INTERVIEW_ID_HERE/start
+
+### Process Response (Get Next Question)
+POST http://localhost:3001/api/ai/interview/sessions/SESSION_ID_HERE/respond
+Content-Type: application/json
+
+{
+  "responseText": "I have 5 years of experience working with React. I've built several large-scale applications and am comfortable with hooks, context, and state management."
+}
+
+### Get Session Context
+GET http://localhost:3001/api/ai/interview/sessions/SESSION_ID_HERE/context
+
+### Complete Interview
+POST http://localhost:3001/api/ai/interview/sessions/SESSION_ID_HERE/complete
+

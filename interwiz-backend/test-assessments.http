@@ -1,0 +1,151 @@
+### Get All Assessments (with filters)
+GET http://localhost:3001/api/assessments?page=1&limit=10&type=ROLE_SPECIFIC&difficulty=MEDIUM&isPublic=true
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get All Assessments (default)
+GET http://localhost:3001/api/assessments
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get Assessment Types
+GET http://localhost:3001/api/assessments/types
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get Assessments by Skill
+GET http://localhost:3001/api/assessments/by-skill/Communication
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get Single Assessment
+GET http://localhost:3001/api/assessments/ASSESSMENT_ID_HERE
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Create Assessment
+POST http://localhost:3001/api/assessments
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "name": "Role-Specific Screening Assessment",
+  "type": "ROLE_SPECIFIC",
+  "description": "Evaluates role-specific competencies for customer support roles",
+  "duration": 18,
+  "difficulty": "MEDIUM",
+  "skillsEvaluated": ["Communication", "Problem Solving", "Customer Service"],
+  "isPublic": true,
+  "questions": [
+    {
+      "text": "Tell me about a time when you had to deal with a difficult customer.",
+      "type": "BEHAVIORAL",
+      "expectedAnswer": "Should demonstrate empathy, problem-solving approach, and positive outcome",
+      "followUpPrompts": [
+        "What was the outcome?",
+        "How did the customer respond?"
+      ],
+      "scoringCriteria": {
+        "rubric": "Evaluate empathy, problem-solving approach, and outcome",
+        "keyPoints": [
+          "Shows empathy",
+          "Describes clear problem-solving steps",
+          "Mentions positive outcome"
+        ],
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "timeLimit": 180,
+      "order": 1
+    },
+    {
+      "text": "How do you prioritize multiple customer requests?",
+      "type": "SITUATIONAL",
+      "expectedAnswer": "Should describe a clear prioritization framework",
+      "scoringCriteria": {
+        "rubric": "Evaluate prioritization framework and decision-making",
+        "keyPoints": [
+          "Clear prioritization criteria",
+          "Considers urgency and impact",
+          "Balances multiple requests"
+        ],
+        "maxScore": 100,
+        "weight": 0.3
+      },
+      "timeLimit": 120,
+      "order": 2
+    },
+    {
+      "text": "Describe your experience with customer support tools.",
+      "type": "TECHNICAL",
+      "scoringCriteria": {
+        "rubric": "Evaluate technical knowledge and tool familiarity",
+        "keyPoints": [
+          "Mentions specific tools",
+          "Describes proficiency level",
+          "Shows understanding of tool capabilities"
+        ],
+        "maxScore": 100,
+        "weight": 0.4
+      },
+      "timeLimit": 150,
+      "order": 3
+    }
+  ]
+}
+
+### Update Assessment
+PUT http://localhost:3001/api/assessments/ASSESSMENT_ID_HERE
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "name": "Updated Role-Specific Screening Assessment",
+  "description": "Updated description",
+  "isPublic": false
+}
+
+### Add Question to Assessment
+POST http://localhost:3001/api/assessments/ASSESSMENT_ID_HERE/questions
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "text": "What motivates you in a customer support role?",
+  "type": "OPEN_ENDED",
+  "scoringCriteria": {
+    "rubric": "Evaluate motivation and alignment with role",
+    "keyPoints": [
+      "Shows genuine interest",
+      "Aligns with customer service values",
+      "Demonstrates commitment"
+    ],
+    "maxScore": 100,
+    "weight": 0.2
+  },
+  "timeLimit": 120,
+  "order": 4
+}
+
+### Update Question
+PUT http://localhost:3001/api/assessments/ASSESSMENT_ID_HERE/questions/QUESTION_ID_HERE
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "text": "Updated question text",
+  "timeLimit": 150
+}
+
+### Delete Question
+DELETE http://localhost:3001/api/assessments/ASSESSMENT_ID_HERE/questions/QUESTION_ID_HERE
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Reorder Questions
+POST http://localhost:3001/api/assessments/ASSESSMENT_ID_HERE/questions/reorder
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "questionIds": ["question-id-2", "question-id-1", "question-id-3"]
+}
+
+### Delete Assessment
+DELETE http://localhost:3001/api/assessments/ASSESSMENT_ID_HERE
+Authorization: Bearer YOUR_TOKEN_HERE
+

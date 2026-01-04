@@ -1,0 +1,78 @@
+### Create Availability Slots
+POST http://localhost:3001/api/scheduling/interviews/INTERVIEW_ID_HERE/availability
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "availabilitySlots": [
+    {
+      "startTime": "2024-01-15T10:00:00Z",
+      "endTime": "2024-01-15T11:00:00Z"
+    },
+    {
+      "startTime": "2024-01-15T14:00:00Z",
+      "endTime": "2024-01-15T15:00:00Z"
+    }
+  ],
+  "timezone": "America/New_York"
+}
+
+### Get Available Slots (in candidate timezone)
+GET http://localhost:3001/api/scheduling/schedules/SCHEDULE_ID_HERE/available-slots?timezone=America/Los_Angeles
+
+### Select Time Slot (Candidate)
+POST http://localhost:3001/api/scheduling/schedules/SCHEDULE_ID_HERE/select-slot
+Content-Type: application/json
+
+{
+  "selectedSlot": "2024-01-15T10:00:00Z",
+  "timezone": "America/New_York"
+}
+
+### Get Schedule by Interview ID
+GET http://localhost:3001/api/scheduling/interviews/INTERVIEW_ID_HERE/schedule
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Reschedule Interview
+PUT http://localhost:3001/api/scheduling/schedules/SCHEDULE_ID_HERE/reschedule
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "newSlot": "2024-01-16T10:00:00Z"
+}
+
+### Cancel Schedule
+DELETE http://localhost:3001/api/scheduling/schedules/SCHEDULE_ID_HERE
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get Google Calendar Auth URL
+GET http://localhost:3001/api/scheduling/calendar/google/auth-url
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Connect Google Calendar
+POST http://localhost:3001/api/scheduling/calendar/google/connect
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "code": "AUTH_CODE_FROM_GOOGLE"
+}
+
+### Get Outlook Calendar Auth URL
+GET http://localhost:3001/api/scheduling/calendar/outlook/auth-url
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Connect Outlook Calendar
+POST http://localhost:3001/api/scheduling/calendar/outlook/connect
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "code": "AUTH_CODE_FROM_OUTLOOK"
+}
+
+### Get All Timezones
+GET http://localhost:3001/api/scheduling/timezones
+Authorization: Bearer YOUR_TOKEN_HERE
+

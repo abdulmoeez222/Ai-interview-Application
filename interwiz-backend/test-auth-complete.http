@@ -1,0 +1,80 @@
+### Register User
+POST http://localhost:3001/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "recruiter@company.com",
+  "password": "Password123!",
+  "firstName": "John",
+  "lastName": "Doe",
+  "company": "Tech Corp"
+}
+
+### Login
+POST http://localhost:3001/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "recruiter@company.com",
+  "password": "Password123!"
+}
+
+### Verify Email (use token from register response in dev mode)
+POST http://localhost:3001/api/auth/verify-email
+Content-Type: application/json
+
+{
+  "token": "VERIFICATION_TOKEN_HERE"
+}
+
+### Refresh Token
+POST http://localhost:3001/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "REFRESH_TOKEN_HERE"
+}
+
+### Get Profile (replace TOKEN with access token from login)
+GET http://localhost:3001/api/auth/me
+Authorization: Bearer TOKEN
+
+### Forgot Password
+POST http://localhost:3001/api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "recruiter@company.com"
+}
+
+### Reset Password (use token from forgot-password response in dev mode)
+POST http://localhost:3001/api/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "RESET_TOKEN_HERE",
+  "password": "NewPassword123!"
+}
+
+### Test: Register with personal email (should fail)
+POST http://localhost:3001/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "user@gmail.com",
+  "password": "Password123!",
+  "firstName": "Test",
+  "lastName": "User"
+}
+
+### Test: Register with weak password (should fail)
+POST http://localhost:3001/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@company.com",
+  "password": "weak",
+  "firstName": "Test",
+  "lastName": "User"
+}
+

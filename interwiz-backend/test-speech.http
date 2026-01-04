@@ -1,0 +1,21 @@
+### Text to Speech
+POST http://localhost:3001/api/speech/text-to-speech
+Content-Type: application/json
+
+{
+  "text": "Hello! Welcome to your interview. I'm Ava, your AI interviewer. Let's begin with the first question.",
+  "voiceProfile": "professional"
+}
+
+### Speech to Text (upload audio file)
+POST http://localhost:3001/api/speech/speech-to-text
+Content-Type: multipart/form-data
+
+# Use form-data with key "audio" and upload a .wav file
+
+### Get Available Voices
+GET http://localhost:3001/api/speech/voices
+
+### Estimate TTS Cost
+GET http://localhost:3001/api/speech/estimate-cost?text=This is a test message to estimate the cost of text to speech conversion.
+

@@ -1,0 +1,101 @@
+### Get All Interviews (with filters)
+GET http://localhost:3001/api/interviews?page=1&limit=10&status=SCHEDULED&search=john
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get All Interviews (default)
+GET http://localhost:3001/api/interviews
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get Single Interview
+GET http://localhost:3001/api/interviews/INTERVIEW_ID_HERE
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Create Interview
+POST http://localhost:3001/api/interviews
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "candidateEmail": "john.doe@example.com",
+  "candidateName": "John Doe",
+  "candidatePhone": "+1234567890",
+  "templateId": "TEMPLATE_ID_HERE",
+  "timezone": "America/New_York",
+  "availabilitySlots": [
+    {
+      "startTime": "2024-01-15T10:00:00Z",
+      "endTime": "2024-01-15T11:00:00Z"
+    },
+    {
+      "startTime": "2024-01-15T14:00:00Z",
+      "endTime": "2024-01-15T15:00:00Z"
+    }
+  ],
+  "metadata": {
+    "source": "LinkedIn",
+    "referral": "Employee Referral"
+  }
+}
+
+### Cancel Interview
+DELETE http://localhost:3001/api/interviews/INTERVIEW_ID_HERE
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get Interview Report
+GET http://localhost:3001/api/interviews/INTERVIEW_ID_HERE/report
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Get Interview Responses
+GET http://localhost:3001/api/interviews/INTERVIEW_ID_HERE/responses
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Public: Get Interview by Token
+GET http://localhost:3001/api/interviews/public/INVITE_TOKEN_OR_JOIN_TOKEN_HERE
+
+### Public: Schedule Interview (Candidate)
+POST http://localhost:3001/api/interviews/public/INVITE_TOKEN_HERE/schedule
+Content-Type: application/json
+
+{
+  "selectedSlot": "2024-01-15T10:00:00Z",
+  "timezone": "America/New_York"
+}
+
+### Public: Join/Start Interview (Candidate)
+POST http://localhost:3001/api/interviews/public/JOIN_TOKEN_HERE/join
+
+### Save Interview Response
+POST http://localhost:3001/api/interviews/INTERVIEW_ID_HERE/responses
+Content-Type: application/json
+
+{
+  "assessmentId": "ASSESSMENT_ID_HERE",
+  "questionId": "QUESTION_ID_HERE",
+  "questionText": "Tell me about your experience with React.",
+  "responseText": "I have 5 years of experience working with React...",
+  "responseAudioUrl": "https://storage.example.com/audio.mp3",
+  "score": 85,
+  "evaluation": "Strong technical knowledge demonstrated with specific examples.",
+  "timeSpent": 120
+}
+
+### Complete Interview
+POST http://localhost:3001/api/interviews/INTERVIEW_ID_HERE/complete
+
+### Update Proctoring Data
+POST http://localhost:3001/api/interviews/INTERVIEW_ID_HERE/proctor
+Content-Type: application/json
+
+{
+  "faceDetections": [
+    {
+      "timestamp": "2024-01-15T10:05:00Z",
+      "facesDetected": 1,
+      "confidence": 0.95
+    }
+  ],
+  "tabSwitches": 1,
+  "fullscreenExits": 0,
+  "suspiciousActivity": []
+}
+

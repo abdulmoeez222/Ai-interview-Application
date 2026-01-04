@@ -1,0 +1,25 @@
+### Register User
+POST http://localhost:3001/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123",
+  "firstName": "Test",
+  "lastName": "User",
+  "company": "Test Company"
+}
+
+### Login
+POST http://localhost:3001/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### Get Profile (replace TOKEN with actual token from login)
+GET http://localhost:3001/api/auth/me
+Authorization: Bearer TOKEN
+
